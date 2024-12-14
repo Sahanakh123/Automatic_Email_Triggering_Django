@@ -1,0 +1,23 @@
+# yourapp/management/commands/send_emails.py
+
+from django.core.management.base import BaseCommand
+from django.core.mail import send_mail
+from django.utils import timezone
+from studentfiles.models import Student  # Import your Student model
+
+class Command(BaseCommand):
+    help = 'Send emails to students with last_date today'
+
+    def handle(self, *args, **options):
+        today = timezone.now().date()
+        students = Student.objects.filter(last_date=today)
+
+        for student in students:
+            subject = 'Your Subject Here'
+            message = 'Your Message Here'
+            from_email = 'monishamonisha0095@gmail.com'
+            to_email = [student.email]  # Assuming your Student model has an 'email' field
+
+            send_mail(subject, message, from_email, to_email)
+
+            self.stdout.write(self.style.SUCCESS(f'Successfully sent email to {student.email}'))
